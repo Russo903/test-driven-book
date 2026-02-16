@@ -1,5 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Template {
 
@@ -16,20 +18,27 @@ public class Template {
     }
 
     public String evaluate() {
-        String result = stringTemplate;
-        for (Map.Entry<String, String> entry : variableMap.entrySet()) {
-            String regex = "\\$\\{" + entry.getKey() +"\\}";
-            result = result.replaceAll(regex, entry.getValue());
-        }
-        // throw exception if
+        String result = fillInTemplateWithValues();
         checkForMissingValues(result);
 
         return result;
     }
 
+    private String fillInTemplateWithValues() {
+        String result = stringTemplate;
+        for (Map.Entry<String, String> entry : variableMap.entrySet()) {
+            String regex = "\\$\\{" + entry.getKey() +"\\}";
+            result = result.replaceAll(regex, entry.getValue());
+        }
+        return result;
+    }
+
     private void checkForMissingValues(String result) {
-         if (result.matches(".*\\$\\{[^}]*\\}.*")) {
-            throw new MissingValueException();
+        Pattern pattern = Pattern.compile(".*\\$\\{[^}]*\\}.*");
+        Matcher matcher = pattern.matcher(result);
+
+        if (matcher.find()) {
+            throw new MissingValueException("No value found for " + matcher.group());
         }
     }
 }

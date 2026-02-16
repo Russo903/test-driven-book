@@ -32,8 +32,16 @@ public class TestTemplate {
             new Template("${foo}").evaluate();
             fail("evaluate() should throw if template still has variables after calling evaluate");
         } catch (MissingValueException exception) {
-
+            assertEquals("No value found for ${foo}", exception.getMessage());
         }
+    }
+
+    @Test
+    public void variablesGetProcessedJustOnce() {
+        template.set("one", "${one}");
+        template.set("two", "${three}");
+        template.set("three", "${two}");
+        assertTemplateEvaluatesTo("${one}, ${three}, ${two}");
     }
 
     private void assertTemplateEvaluatesTo(String expected) {
