@@ -2,6 +2,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TestTemplate {
     private Template template;
@@ -23,6 +24,16 @@ public class TestTemplate {
     public void unknownVariablesAreIgnored() throws Exception {
         template.set("doesNotExist", "dev");
         assertTemplateEvaluatesTo("1, 2, 3");
+    }
+
+    @Test
+    public void throwsExceptionWhenVariableLeft() throws Exception {
+        try {
+            new Template("${foo}").evaluate();
+            fail("evaluate() should throw if template still has variables after calling evaluate");
+        } catch (MissingValueException exception) {
+
+        }
     }
 
     private void assertTemplateEvaluatesTo(String expected) {

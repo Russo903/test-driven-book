@@ -22,6 +22,11 @@ public class Template {
             result = result.replaceAll(regex, entry.getValue());
         }
 
+        // throw exception if
+        if (result.matches(".*\\$\\{[^}]*\\}.*")) {
+            throw new MissingValueException();
+        }
+
         return result;
     }
 }
