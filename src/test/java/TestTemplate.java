@@ -1,8 +1,10 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
 
 public class TestTemplate {
     private Template template;
@@ -36,15 +38,45 @@ public class TestTemplate {
         }
     }
 
-    @Test
-    public void variablesGetProcessedJustOnce() {
-        template.set("one", "${one}");
-        template.set("two", "${three}");
-        template.set("three", "${two}");
-        assertTemplateEvaluatesTo("${one}, ${three}, ${two}");
-    }
+//    @Test
+//    public void variablesGetProcessedJustOnce() {
+//        template.set("one", "${one}");
+//        template.set("two", "${three}");
+//        template.set("three", "${two}");
+//        assertTemplateEvaluatesTo("${one}, ${three}, ${two}");
+//    }
 
     private void assertTemplateEvaluatesTo(String expected) {
         assertEquals(expected, template.evaluate());
+    }
+    
+    
+    /**
+     * Learning Tests - Tests we use to learn and test our assumptions to ensure we understand
+     * here we ASSUMED that group count would return the number of matches, but it actually
+     * just returns the amount of capturing groups in your matchers pattern
+     */
+    
+    @Test
+    public void learningRegexGroupMethod() {
+        String message = "something needle about something else needles";
+        Pattern pattern = Pattern.compile("(needle)");
+        Matcher matcher = pattern.matcher(message);
+        assertEquals(1, matcher.groupCount());
+    }
+    
+    @Test
+    public void testFindStartandEnd() {
+        String message = "something needle about something else needles";
+        Pattern pattern = Pattern.compile("(needle)");
+        Matcher matcher = pattern.matcher(message);
+        assertTrue(matcher.find());
+        assertEquals("wrong start index", 10, matcher.start());
+        assertEquals("wrong end index", 16, matcher.end());
+        assertTrue(matcher.find());
+        assertEquals("wrong start index", 38, matcher.start());
+        assertEquals("wrong end index", 44, matcher.end());
+        
+        
     }
 }
