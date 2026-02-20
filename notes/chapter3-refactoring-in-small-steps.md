@@ -21,86 +21,15 @@ Matches template variables like `${name}`. Breakdown:
 - `}` — matches the closing `}`
 
 
-# Levels of Abstraction 
-We had a method with 2 levels of abstraction. High level and low level. The goal is to have uniform level of abstraction.
-This can be an easy refactoring effort sometimes. Heres an examples 
-```java
-public String evaluate() {
-        TemplateParser parser = new TemplateParser();
-        List<String> segments = parser.parse(stringTemplate);
-        StringBuilder sb = new StringBuilder();
-        for (String segment : segments) {
-            append(segment, sb);
-        }
-        return sb.toString();
-    }
-```
-This method above is mixing two levels of abstration. We have `parser.parse(stringTemplate)` which is going to split a string into segments and we say
-"Here you go, we dont care how you do it. Just go get those segments for us". But then just below it we have a `StringBuilder` we are managing, looping over and calling append on it here.
+# Levels of Abstraction
+## Uniform Level of Abstraction
 
+A method should either deal with *what* happens (high level) or *how* it happens (low level) — not both. When a method mixes the two, extract the low level detail into its own method.
 
-```java
-public String evaluate() {
-        TemplateParser parser = new TemplateParser();
-        List<String> segments = parser.parse(stringTemplate);
-        return concatenate(segments);
-    }
-    
-    private String concatenate(List<String> segments) {
-        StringBuilder sb = new StringBuilder();
-        for (String segment : segments) {
-            append(segment, sb);
-        }
-        return sb.toString();
-    }
-```
-This refactored version shows that looping manual logic pulled out. Now evaluate has a much tighter focus and what it needs to accomplish and how it goes about that.
-It now has a uniform level of abstraction.
+In `evaluate()`, `parser.parse()` was high level ("go get me the segments") but the `StringBuilder` loop below it was low level detail. Extracting it into `concatenate()` gave `evaluate()` a uniform, high level focus.
 
+Same applied to `append()` — the raw string checks and map lookups were buried in one messy method. Extracting `isVariable()` and `evaluateVariable()` made the intent immediately readable.
 
---- 
-### Refactoring continued
-We can go even further with this
-```java
-    private void append(String segment, StringBuilder sb) {
-        if (segment.startsWith("${") && segment.endsWith("}")) {
-            String variable = segment.substring(2, segment.length() - 1);
-            
-            if (!variableMap.containsKey(variable)) {
-                throw new MissingValueException("No value found for " + segment);
-            }
-            sb.append(variableMap.get(variable));
-            
-        } else {
-            sb.append(segment);
-        }
-    }
-```
-This method is disgusting and I woudlnt want another coworker to look at it. Its hard to read and if I came back to this at a later time
-even as the author I would not be very happy. Lets pull more things out and make this readable
+## Tell Don't Ask
 
-
-```java
-  private void append(String segment, StringBuilder sb) {
-        if (isVariable(segment)) {
-            evaluateVariable(segment, sb);
-        } else {
-            sb.append(segment);
-        }
-    }
-    
-    private void evaluateVariable(String segment, StringBuilder sb) {
-        String variable = segment.substring(2, segment.length() - 1);
-        if (!variableMap.containsKey(variable)) {
-            throw new MissingValueException("No value found for " + segment);
-        }
-        sb.append(variableMap.get(variable));
-    }
-    
-    private boolean isVariable(String segment) {
-        return segment.startsWith("${") && segment.endsWith("}");
-    }
-```
-
-
-- note something short about "tell dont ask" principle
+Tell objects to do things rather than asking for their data and doing it yourself. If you're reaching into an object, pulling out data, and making decisions based on it — that logic probably belongs inside the object instead.
