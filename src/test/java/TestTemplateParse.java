@@ -20,9 +20,16 @@ public class TestTemplateParse {
         assertSegments(segments, "Plain text");
     }
     
+    @Test
+    public void parseMultipleVariables() {
+        List<String> segments = parse("${a}:${b}:${c}");
+        assertSegments(segments, "${a}", ":", "${b}", ":", "${c}");
+    }
+    
     private List<String> parse(String template) {
         return new TemplateParser().parse(template);
     }
+    
     
     /**
      * In our tests we can asserting these two things for the parse
