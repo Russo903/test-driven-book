@@ -26,7 +26,8 @@ Each piece of functionality starts with a failing test. No production code gets 
 |---------|-------|--------|
 | 1 | The Big Picture | ✅ |
 | 2 | Beginning TDD | ✅ |
-| 3 | Refactoring in Small Steps | 🔄 |
+| 3 | Refactoring in Small Steps | ✅ |
+| 4 | Concepts and Patterns for TDD | 🔄 |
 
 > I might not have 'dedicated' notes, I like to take notes in javadocs. Although this could change
 ## Why TDD
