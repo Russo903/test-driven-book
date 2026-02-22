@@ -48,7 +48,7 @@ public class Template {
         sb.append(variableMap.get(variable));
     }
     
-    private boolean isVariable(String segment) {
+    public static boolean isVariable(String segment) {
         return segment.startsWith("${") && segment.endsWith("}");
     }
 }

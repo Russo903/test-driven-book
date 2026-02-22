@@ -69,4 +69,23 @@ public class TemplateParser {
         }
     }
     
+    
+    /**
+     * use the parse we already have and add a loop
+     * to seperate our strings into there own
+     * {@code Segment} objects. Also using
+     * {@code isVariable()} util from Template
+     */
+    public List<Segment> parseSegments(String template) {
+        List<String> strings = parse(template);
+        List<Segment> segments = new ArrayList<>();
+        for (String string : strings) {
+            if (Template.isVariable(string)) {
+                segments.add(new Variable(string.substring(2, string.length() - 1)));
+            } else {
+                segments.add(new PlainText(string));
+            }
+        }
+        return segments;
+    }
 }

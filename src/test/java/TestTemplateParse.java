@@ -1,7 +1,5 @@
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +22,15 @@ public class TestTemplateParse {
     public void parseMultipleVariables() {
         List<String> segments = parse("${a}:${b}:${c}");
         assertSegments(segments, "${a}", ":", "${b}", ":", "${c}");
+    }
+    
+    @Test
+    public void parsingTemplateIntoSegments() {
+        TemplateParser parser = new TemplateParser();
+        List<Segment> segments = parser.parseSegments("a ${b} c ${d}");
+        assertSegments(segments,
+                new PlainText("a "), new Variable("b"),
+                new PlainText(" c "), new Variable("d"));
     }
     
     private List<String> parse(String template) {
