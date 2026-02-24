@@ -20,27 +20,27 @@ public class TemplateParser {
      *  to the end of that variable, so the next iteration picks up from the right place.
      *
      */
-    public List<String> parse(String template) {
-        List<String> segments = new ArrayList<>();
+    public List<Segment> parse(String template) {
+        List<Segment> segments = new ArrayList<>();
         int index = breakIntoSegments(segments, template);
         addTail(segments, template, index);
         renderEmptyStringOnEmptyTemplate(segments);
         return segments;
     }
     
-    private void renderEmptyStringOnEmptyTemplate(List<String> segments) {
+    private void renderEmptyStringOnEmptyTemplate(List<Segment> segments) {
         if (segments.isEmpty()) {
-            segments.add("");
+            segments.add(new PlainText(""));
         }
     }
     
-    private void addTail(List<String> segments, String template, int index) {
+    private void addTail(List<Segment> segments, String template, int index) {
         if (index < template.length()) {
-            segments.add(template.substring(index));
+            segments.add(new PlainText(template.substring(index)));
         }
     }
     
-    private int breakIntoSegments(List<String> segments, String template) {
+    private int breakIntoSegments(List<Segment> segments, String template) {
         Pattern pattern = Pattern.compile("\\$\\{[^}]*}");
         Matcher matcher = pattern.matcher(template);
         
@@ -56,41 +56,16 @@ public class TemplateParser {
         return index;
     }
     
-    private void addVariable(List<String> segments, String template, Matcher matcher) {
-        segments.add(template.substring(matcher.start(), matcher.end()));
+    private void addVariable(List<Segment> segments, String template, Matcher matcher) {
+        segments.add(new Variable(template.substring(matcher.start() + 2, matcher.end() - 1)));
     }
     
     // uses the running index to know where to start from
-    private void addPlainText(List<String> segments, String template, int index, Matcher matcher) {
+    private void addPlainText(List<Segment> segments, String template, int index, Matcher matcher) {
         // a check to see if where we are picking up from is a variable
         // if not, add text up until varible, if is, do nothing
         if (index != matcher.start()) {
-            segments.add(template.substring(index, matcher.start()));
+            segments.add(new PlainText(template.substring(index, matcher.start())));
         }
-    }
-    
-    
-    /**
-     * use the parse we already have and add a loop
-     * to seperate our strings into there own
-     * {@code Segment} objects. Also using
-     * {@code isVariable()} util from Template
-     */
-    public List<Segment> parseSegments(String template) {
-        List<String> strings = parse(template);
-        List<Segment> segments = new ArrayList<>();
-        for (String string : strings) {
-            if (isVariable(string)) {
-                segments.add(new Variable(string.substring(2, string.length() - 1)));
-            } else {
-                segments.add(new PlainText(string));
-            }
-        }
-        return segments;
-    }
-    
-    
-    private boolean isVariable(String segment) {
-        return segment.startsWith("${") && segment.endsWith("}");
     }
 }
