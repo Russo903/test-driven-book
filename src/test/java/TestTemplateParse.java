@@ -8,32 +8,32 @@ public class TestTemplateParse {
     
     @Test
     public void emptyTemplateRendersEmptyString() {
-        List<String> segments = parse("");
-        assertSegments(segments, "");
+        List<Segment> segments = parse("");
+        assertSegments(segments, new PlainText(""));
     }
     
     @Test
     public void plainTextRendersPlainText() {
-        List<String> segments = parse("Plain text");
-        assertSegments(segments, "Plain text");
+        List<Segment> segments = parse("Plain text");
+        assertSegments(segments, new PlainText("Plain text"));
     }
     
     @Test
     public void parseMultipleVariables() {
-        List<String> segments = parse("${a}:${b}:${c}");
-        assertSegments(segments, "${a}", ":", "${b}", ":", "${c}");
+        List<Segment> segments = parse("${a}:${b}:${c}");
+        assertSegments(segments, new Variable("a"), new PlainText(":"), new Variable("b"), new PlainText(":"), new Variable("c"));
     }
     
     @Test
     public void parsingTemplateIntoSegments() {
         TemplateParser parser = new TemplateParser();
-        List<Segment> segments = parser.parseSegments("a ${b} c ${d}");
+        List<Segment> segments = parser.parse("a ${b} c ${d}");
         assertSegments(segments,
                 new PlainText("a "), new Variable("b"),
                 new PlainText(" c "), new Variable("d"));
     }
     
-    private List<String> parse(String template) {
+    private List<Segment> parse(String template) {
         return new TemplateParser().parse(template);
     }
     
