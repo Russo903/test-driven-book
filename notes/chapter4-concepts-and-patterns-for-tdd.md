@@ -57,7 +57,25 @@ Benefits
 - allow test to focus on the one thing they're testing
 
 ### Test Doubles (Mocks)
-- Left off here
+**What if the code you're testing depends on something complex or unreliable, like a database, a file, or another class that isn't built yet?**
+
+You don't want your test to braek becuase the database is down. You want to test your code in isolation.
+A test double is a simplified stand in swap in place of the real dependency, just for the test.
+
+This is an umbrella term. Under it, there are a few types.
+
+| Type  | What it does                          |
+|-------|---------------------------------------|
+| Stub  | Returns a hardcoded value when called |
+| Mock  | Also checks how it was called         |
+| Fake  | A working but simplified version      |
+| Dummy | Passed in but never actually used     |
+ 
+
+### State based Testing
+Verifying the state of an object after you act on it.
+So checking a return value, or check what ended up in some data structure. Both of those are state, the
+data that exists after the operation ran.
 
 
  
