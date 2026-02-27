@@ -77,5 +77,8 @@ Verifying the state of an object after you act on it.
 So checking a return value, or check what ended up in some data structure. Both of those are state, the
 data that exists after the operation ran.
 
+Test doubles are used as stand ins when you dont care about the dependencys logic. You want to fake that logic
+and only where about the logic of the object you are testing. You would do this for slow calculations, database access,
+expensive calls. you want to fake the return for your outer object.
 
  
